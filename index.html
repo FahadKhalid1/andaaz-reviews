@@ -189,29 +189,29 @@
   </div>
 
   <div class="mood-section">
-    <div class="section-label">What did you love most?</div>
+    <div class="section-label">What did you love? (pick one or more)</div>
     <div class="mood-grid">
-      <div class="mood-btn active" data-mood="food" onclick="selectMood(this)">
+      <div class="mood-btn active" data-mood="food" onclick="toggleMood(this)">
         <span class="mood-emoji">🍛</span>
         <span class="mood-label">The Food</span>
       </div>
-      <div class="mood-btn" data-mood="ambiance" onclick="selectMood(this)">
+      <div class="mood-btn" data-mood="ambiance" onclick="toggleMood(this)">
         <span class="mood-emoji">✨</span>
         <span class="mood-label">Ambiance</span>
       </div>
-      <div class="mood-btn" data-mood="service" onclick="selectMood(this)">
+      <div class="mood-btn" data-mood="service" onclick="toggleMood(this)">
         <span class="mood-emoji">🤝</span>
         <span class="mood-label">Service</span>
       </div>
-      <div class="mood-btn" data-mood="family" onclick="selectMood(this)">
+      <div class="mood-btn" data-mood="family" onclick="toggleMood(this)">
         <span class="mood-emoji">👨‍👩‍👧‍👦</span>
         <span class="mood-label">Family Vibe</span>
       </div>
-      <div class="mood-btn" data-mood="fusion" onclick="selectMood(this)">
+      <div class="mood-btn" data-mood="fusion" onclick="toggleMood(this)">
         <span class="mood-emoji">🇫🇷🇵🇰</span>
         <span class="mood-label">Fusion Menu</span>
       </div>
-      <div class="mood-btn" data-mood="overall" onclick="selectMood(this)">
+      <div class="mood-btn" data-mood="overall" onclick="toggleMood(this)">
         <span class="mood-emoji">💯</span>
         <span class="mood-label">Everything!</span>
       </div>
@@ -259,7 +259,7 @@
 const GOOGLE_MAPS_REVIEW_URL = 'https://search.google.com/local/writereview?placeid=ChIJn-trPZdv5kdkQqzk6M49Xg';
 
 let currentLang = 'en';
-let currentMood = 'food';
+let selectedMoods = ['food'];
 
 // ============================================================
 // SEO/GEO KEYWORD POOLS — Paris Desi Indian Restaurant
@@ -677,10 +677,89 @@ function simpleHash(str) {
   return hash;
 }
 
+// Short add-on sentences when multiple moods are selected
+const moodAddOns = {
+  en: {
+    food: [
+      'The {dish1} was really good — {dish_adj1}.',
+      'Loved the {dish1}. {dish_adj1}.',
+      'The {dish1} here is a must-try.',
+      'Food was great — the {dish1} especially.'
+    ],
+    ambiance: [
+      'The place looks beautiful too.',
+      'Really nice atmosphere as well.',
+      'Love the decor — warm and classy.',
+      'The vibe is spot on.'
+    ],
+    service: [
+      'Staff were really friendly.',
+      'Service was great too — very attentive.',
+      'The team here are lovely.',
+      'Our waiter was super helpful.'
+    ],
+    family: [
+      'Great for families — everyone was happy.',
+      'Brought the whole family and they all loved it.',
+      'Kids and grandparents both enjoyed it.',
+      'Works really well for a family dinner.'
+    ],
+    fusion: [
+      'The French twist on desi food works really well.',
+      'Love the Indo-French fusion concept.',
+      'The French influence adds something special.',
+      'Cool fusion concept that actually delivers.'
+    ],
+    overall: [
+      'Everything was on point honestly.',
+      'Just a really solid experience all round.',
+      'Hard to fault anything.',
+      'Ticks every box.'
+    ]
+  },
+  fr: {
+    food: [
+      'Le {dish1} était vraiment bon — {dish_adj1}.',
+      'J\'ai adoré le {dish1}. {dish_adj1}.',
+      'Le {dish1} ici est à essayer absolument.',
+      'La cuisine était top — le {dish1} surtout.'
+    ],
+    ambiance: [
+      'L\'endroit est très beau aussi.',
+      'Super ambiance en plus.',
+      'J\'adore la déco — chaleureuse et classe.',
+      'L\'atmosphère est au top.'
+    ],
+    service: [
+      'Le personnel était super sympa.',
+      'Le service était très bien aussi — attentif.',
+      'L\'équipe ici est vraiment bien.',
+      'Notre serveur était très serviable.'
+    ],
+    family: [
+      'Super pour les familles — tout le monde était content.',
+      'On a amené toute la famille et ils ont tous adoré.',
+      'Parfait pour un repas en famille.',
+      'Ça marche très bien pour un dîner en famille.'
+    ],
+    fusion: [
+      'La touche française sur la cuisine desi marche bien.',
+      'J\'adore le concept de fusion indo-française.',
+      'L\'influence française ajoute quelque chose de spécial.',
+      'Un concept fusion cool qui tient ses promesses.'
+    ],
+    overall: [
+      'Tout était bien honnêtement.',
+      'Une expérience vraiment solide dans l\'ensemble.',
+      'Difficile de trouver un défaut.',
+      'Ça coche toutes les cases.'
+    ]
+  }
+};
+
 function generateUniqueReview() {
   const lang = currentLang;
-  const mood = currentMood;
-  const f = fragments[lang][mood];
+  const moods = selectedMoods.length > 0 ? selectedMoods : ['food'];
   const kw = seoKeywords[lang];
 
   let review = '';
@@ -689,41 +768,54 @@ function generateUniqueReview() {
   while (attempts < 50) {
     attempts++;
 
-    // Pick random fragments
-    const opener = pick(f.openers);
     const [dish1, dish2] = pickTwo(kw.dishes);
     const location = pick(kw.location);
     const cuisine = pick(kw.cuisine);
     const superlative = pick(kw.superlative);
 
-    // Build middle section based on mood
+    // Use first selected mood as the primary
+    const primaryMood = moods[0];
+    const f = fragments[lang][primaryMood];
+
+    // Opener from primary mood
+    const opener = pick(f.openers)
+      .replace('{location}', location);
+
+    // Short middle from primary mood
     let middle = '';
-    if (mood === 'food') {
-      let dishIntro = pick(f.dish_intros)
-        .replace('{dish1}', dish1)
-        .replace('{dish2}', dish2)
+    if (primaryMood === 'food') {
+      middle = pick(f.dish_intros)
+        .replace('{dish1}', dish1).replace('{dish2}', dish2)
         .replace('{dish_adj1}', pick(f.dish_adjs));
-      middle = dishIntro + ' ' + pick(f.fusion_notes);
-    } else if (mood === 'ambiance') {
-      middle = pick(f.details) + ' ' + pick(f.occasions).replace('{location}', location);
-    } else if (mood === 'service') {
+    } else if (primaryMood === 'ambiance') {
       middle = pick(f.details);
-    } else if (mood === 'family') {
+    } else if (primaryMood === 'service') {
       middle = pick(f.details);
-    } else if (mood === 'fusion' || mood === 'overall') {
+    } else if (primaryMood === 'family') {
+      middle = pick(f.details);
+    } else {
       middle = pick(f.details)
-        .replace('{dish1}', dish1)
-        .replace('{dish2}', dish2)
+        .replace('{dish1}', dish1).replace('{dish2}', dish2)
         .replace('{cuisine}', cuisine);
     }
 
-    // Build closer with keyword injection
+    // Add short sentences for additional selected moods (max 2 extra)
+    const extraMoods = moods.slice(1, 3);
+    let extras = '';
+    for (const m of extraMoods) {
+      const addOn = pick(moodAddOns[lang][m])
+        .replace('{dish1}', pick(kw.dishes))
+        .replace('{dish_adj1}', pick(fragments[lang].food.dish_adjs));
+      extras += ' ' + addOn;
+    }
+
+    // Short closer
     let closer = pick(f.closers)
       .replace('{superlative}', superlative)
       .replace('{location}', location)
       .replace('{cuisine}', cuisine);
 
-    review = opener + ' ' + middle + ' ' + closer;
+    review = opener + ' ' + middle + extras + ' ' + closer;
 
     // Check uniqueness
     const hash = simpleHash(review);
@@ -733,7 +825,6 @@ function generateUniqueReview() {
     }
   }
 
-  // Fallback: add timestamp micro-variation to guarantee uniqueness
   const timeVar = [
     'Visited recently and', 'Just went there and', 'Had dinner here and',
     'Took the family and', 'Went for lunch and', 'Celebrated here and'
@@ -752,10 +843,35 @@ function displayReview() {
   el.textContent = generateUniqueReview();
 }
 
-function selectMood(btn) {
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentMood = btn.dataset.mood;
+function toggleMood(btn) {
+  const mood = btn.dataset.mood;
+
+  // If "Everything" is clicked, select only that
+  if (mood === 'overall') {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedMoods = ['overall'];
+  } else {
+    // Deselect "Everything" if it was active
+    document.querySelector('[data-mood="overall"]').classList.remove('active');
+    selectedMoods = selectedMoods.filter(m => m !== 'overall');
+
+    // Toggle this mood
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      selectedMoods = selectedMoods.filter(m => m !== mood);
+    } else {
+      btn.classList.add('active');
+      selectedMoods.push(mood);
+    }
+
+    // If nothing selected, default to food
+    if (selectedMoods.length === 0) {
+      document.querySelector('[data-mood="food"]').classList.add('active');
+      selectedMoods = ['food'];
+    }
+  }
+
   const el = document.getElementById('reviewText');
   el.classList.add('generating');
   el.textContent = currentLang === 'fr' ? 'Création de votre avis...' : 'Crafting your review...';
