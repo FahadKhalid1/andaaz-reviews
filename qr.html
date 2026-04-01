@@ -204,7 +204,7 @@
     <div class="qr-container">
       <div id="qrCode"></div>
     </div>
-    <div class="qr-url" id="displayUrl">andaaz.stepupai.com</div>
+    <div class="qr-url" id="displayUrl">andaaz.step-upai.com</div>
     <div class="powered">Powered by <span>Step UpAI</span></div>
   </div>
 
@@ -216,7 +216,7 @@
 
   <div class="url-config">
     <label>Review Page URL</label>
-    <input type="text" id="urlInput" value="https://andaaz.stepupai.com" placeholder="https://andaaz.stepupai.com">
+    <input type="text" id="urlInput" value="https://andaaz.step-upai.com" placeholder="https://andaaz.step-upai.com">
     <div class="hint">This URL will be encoded in the QR code. Update when your domain is live.</div>
     <button class="btn-update" onclick="updateQR()">Update QR Code</button>
   </div>
@@ -228,7 +228,7 @@
   </div>
 
 <script>
-  let currentUrl = 'https://andaaz.stepupai.com';
+  let currentUrl = 'https://andaaz.step-upai.com';
   let qrCellSize = 6;
 
   function generateQR(url) {
@@ -266,7 +266,7 @@
 
   function updateQR() {
     const input = document.getElementById('urlInput');
-    currentUrl = input.value.trim() || 'https://andaaz.stepupai.com';
+    currentUrl = input.value.trim() || 'https://andaaz.step-upai.com';
 
     // Update display URL (show clean domain)
     try {
