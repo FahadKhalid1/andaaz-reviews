@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andaaz - Share Your Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8D48B;
+      --dark: #1A1A1A;
+      --darker: #111111;
+      --cream: #FAF5EB;
+      --text: #E8E0D0;
+      --text-muted: #9A9080;
+      --success: #4CAF50;
+      --card-bg: #222222;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
+      z-index: 0; pointer-events: none;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+      position: relative; z-index: 1;
+    }
+    .header { text-align: center; padding: 32px 0 24px; }
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px; font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 4px; text-transform: uppercase;
+    }
+    .tagline {
+      font-size: 11px; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 8px;
+    }
+    .divider { width: 60px; height: 1px; background: var(--gold); margin: 20px auto; opacity: 0.5; }
+    .stars-section { text-align: center; margin: 8px 0 24px; }
+    .stars { font-size: 36px; letter-spacing: 4px; color: var(--gold); }
+    .stars-label { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+    .mood-section { margin-bottom: 24px; }
+    .section-label {
+      font-size: 12px; font-weight: 500; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px;
+    }
+    .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .mood-btn {
+      background: var(--card-bg); border: 1.5px solid transparent;
+      border-radius: 12px; padding: 14px 8px; text-align: center;
+      cursor: pointer; transition: all 0.3s ease; color: var(--text);
+    }
+    .mood-btn:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .mood-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+    .mood-emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+    .mood-label { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .mood-btn.active .mood-label { color: var(--gold); }
+    .review-card {
+      background: var(--card-bg); border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 16px; padding: 24px; margin-bottom: 16px;
+      position: relative; min-height: 160px;
+    }
+    .review-card::before {
+      content: '\201C'; font-family: 'Playfair Display', serif;
+      font-size: 64px; color: var(--gold); opacity: 0.2;
+      position: absolute; top: 8px; left: 16px; line-height: 1;
+    }
+    .review-text {
+      font-size: 15px; line-height: 1.7; color: var(--text);
+      position: relative; z-index: 1; padding-top: 8px; white-space: pre-wrap;
+    }
+    .review-text.generating { color: var(--text-muted); font-style: italic; }
+    .review-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .btn-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      border: 1px solid rgba(201,168,76,0.25); background: transparent;
+      color: var(--gold); cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: all 0.2s ease; font-size: 18px; flex-shrink: 0;
+    }
+    .btn-icon:hover { background: rgba(201,168,76,0.1); }
+    .btn-copy {
+      flex: 1; height: 44px; border-radius: 12px; border: none;
+      background: var(--gold); color: var(--dark);
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px; transition: all 0.2s ease;
+    }
+    .btn-copy:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-copy.copied { background: var(--success); color: white; }
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; height: 54px; border-radius: 14px;
+      border: 2px solid rgba(201,168,76,0.4); background: transparent;
+      color: var(--gold); font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: all 0.3s ease; margin-bottom: 24px; letter-spacing: 0.5px;
+    }
+    .google-btn:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); transform: translateY(-1px); }
+    .google-btn svg { width: 20px; height: 20px; }
+    .steps {
+      margin-top: 16px; padding: 20px;
+      background: rgba(201,168,76,0.04); border-radius: 14px;
+      border: 1px solid rgba(201,168,76,0.08);
+    }
+    .steps-title { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .step:last-child { margin-bottom: 0; }
+    .step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(201,168,76,0.15); color: var(--gold);
+      font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; padding-top: 2px; }
+    .review-text[contenteditable="true"] {
+      outline: none; border: 1px dashed rgba(201,168,76,0.3);
+      border-radius: 8px; padding: 12px; margin: -12px; margin-top: 0;
+    }
+    .edit-hint { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; opacity: 0; transition: opacity 0.2s ease; }
+    .edit-hint.visible { opacity: 1; }
+    .footer { text-align: center; margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(201,168,76,0.08); }
+    .footer-text { font-size: 11px; color: var(--text-muted); opacity: 0.5; }
+    .lang-toggle {
+      display: flex; justify-content: center; gap: 4px; margin-bottom: 20px;
+      background: var(--card-bg); border-radius: 10px; padding: 4px;
+      max-width: 200px; margin-left: auto; margin-right: auto;
+    }
+    .lang-btn {
+      flex: 1; padding: 8px 16px; border: none; border-radius: 8px;
+      background: transparent; color: var(--text-muted); font-size: 12px;
+      font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .lang-btn.active { background: rgba(201,168,76,0.15); color: var(--gold); }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .generating { animation: pulse 1.5s ease-in-out infinite; }
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--gold); color: var(--dark);
+      padding: 12px 24px; border-radius: 12px;
+      font-size: 14px; font-weight: 600; z-index: 100;
+      transition: transform 0.3s ease; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .powered-by { text-align: center; margin-top: 12px; }
+    .powered-by a {
+      font-size: 11px; color: var(--text-muted); text-decoration: none;
+      opacity: 0.6; transition: opacity 0.2s;
+    }
+    .powered-by a:hover { opacity: 1; color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo-text">Andaaz</div>
+    <div class="tagline">Cuisine Fusion Franco-Indienne</div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="stars-section">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <div class="stars-label">Thank you for dining with us!</div>
+  </div>
+
+  <div class="lang-toggle">
+    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">English</button>
+    <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')">Fran&ccedil;ais</button>
+  </div>
+
+  <div class="mood-section">
+    <div class="section-label">What did you love most?</div>
+    <div class="mood-grid">
+      <div class="mood-btn active" data-mood="food" onclick="selectMood(this)">
+        <span class="mood-emoji">🍛</span>
+        <span class="mood-label">The Food</span>
+      </div>
+      <div class="mood-btn" data-mood="ambiance" onclick="selectMood(this)">
+        <span class="mood-emoji">✨</span>
+        <span class="mood-label">Ambiance</span>
+      </div>
+      <div class="mood-btn" data-mood="service" onclick="selectMood(this)">
+        <span class="mood-emoji">🤝</span>
+        <span class="mood-label">Service</span>
+      </div>
+      <div class="mood-btn" data-mood="family" onclick="selectMood(this)">
+        <span class="mood-emoji">👨‍👩‍👧‍👦</span>
+        <span class="mood-label">Family Vibe</span>
+      </div>
+      <div class="mood-btn" data-mood="fusion" onclick="selectMood(this)">
+        <span class="mood-emoji">🇫🇷🇵🇰</span>
+        <span class="mood-label">Fusion Menu</span>
+      </div>
+      <div class="mood-btn" data-mood="overall" onclick="selectMood(this)">
+        <span class="mood-emoji">💯</span>
+        <span class="mood-label">Everything!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-text" id="reviewText" contenteditable="false"></div>
+    <div class="edit-hint" id="editHint">Tap the text to personalize it</div>
+    <div class="review-actions">
+      <button class="btn-icon" onclick="regenerate()" title="Generate new review">&#x21bb;</button>
+      <button class="btn-icon" onclick="toggleEdit()" title="Edit review" id="editBtn">&#9998;</button>
+      <button class="btn-copy" id="copyBtn" onclick="copyReview()">
+        <span>&#x1F4CB;</span> Copy Review
+      </button>
+    </div>
+  </div>
+
+  <button class="google-btn" onclick="openGoogleReview()">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    Open Google Reviews &rarr;
+  </button>
+
+  <div class="steps">
+    <div class="steps-title">How it works</div>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Choose what you loved and we'll craft a unique review for you</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Tap <strong>Copy Review</strong> to copy the text</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Tap <strong>Open Google Reviews</strong>, select 5 stars, paste & submit!</div></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Andaaz — Where Heritage Meets French Contemporary Art</div>
+  </div>
+  <div class="powered-by">
+    <a href="https://stepupai.com" target="_blank">Powered by Step UpAI</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const GOOGLE_MAPS_REVIEW_URL = 'https://search.google.com/local/writereview?placeid=ChIJn-trPZdv5kdkQqzk6M49Xg';
+
+let currentLang = 'en';
+let currentMood = 'food';
+
+// ============================================================
+// SEO/GEO KEYWORD POOLS — Paris Desi Indian Restaurant
+// These rotate into every generated review for local SEO weight.
+// Later: replace with crawler-fed dynamic keywords.
+// ============================================================
+const seoKeywords = {
+  en: {
+    location: [
+      'in Paris', 'in the heart of Paris', 'near Neuilly-sur-Seine',
+      'in the Paris area', 'in western Paris', 'in the 17th arrondissement area',
+      'close to La Défense', 'in the greater Paris region'
+    ],
+    cuisine: [
+      'Indian restaurant', 'Pakistani restaurant', 'desi food',
+      'South Asian cuisine', 'Indo-French fusion', 'halal restaurant',
+      'authentic Indian food', 'best biryani', 'tandoori restaurant',
+      'curry house', 'desi restaurant', 'Indian dining',
+      'Pakistani cuisine', 'authentic desi flavours'
+    ],
+    superlative: [
+      'best Indian restaurant in Paris', 'top-rated desi food in Paris',
+      'finest South Asian dining in Paris', 'must-visit Indian restaurant in Paris',
+      'best Pakistani restaurant near Paris', 'top Indian food in Paris France',
+      'best halal restaurant in Paris', 'premier desi dining in Paris'
+    ],
+    dishes: [
+      'butter chicken', 'biryani', 'tandoori', 'naan', 'karahi',
+      'tikka masala', 'seekh kebab', 'dal makhani', 'paneer',
+      'lamb curry', 'chicken tikka', 'nihari', 'korma',
+      'samosa', 'raita', 'gulab jamun', 'kheer'
+    ]
+  },
+  fr: {
+    location: [
+      'à Paris', 'au cœur de Paris', 'près de Neuilly-sur-Seine',
+      'dans la région parisienne', 'dans l\'ouest parisien',
+      'près de La Défense', 'en Île-de-France'
+    ],
+    cuisine: [
+      'restaurant indien', 'restaurant pakistanais', 'cuisine desi',
+      'cuisine sud-asiatique', 'fusion franco-indienne', 'restaurant halal',
+      'cuisine indienne authentique', 'meilleur biryani', 'restaurant tandoori',
+      'restaurant desi', 'gastronomie indienne', 'cuisine pakistanaise'
+    ],
+    superlative: [
+      'meilleur restaurant indien à Paris', 'meilleure cuisine desi à Paris',
+      'meilleur restaurant pakistanais à Paris', 'incontournable cuisine indienne à Paris',
+      'meilleur restaurant halal à Paris', 'top restaurant indien en France'
+    ],
+    dishes: [
+      'poulet au beurre', 'biryani', 'tandoori', 'naan', 'karahi',
+      'tikka masala', 'seekh kebab', 'dal makhani', 'paneer',
+      'curry d\'agneau', 'chicken tikka', 'nihari', 'korma',
+      'samosa', 'raïta', 'gulab jamun', 'kheer'
+    ]
+  }
+};
+
+// ============================================================
+// DYNAMIC REVIEW ENGINE — Never generates the same text twice
+// Each review is assembled from interchangeable fragments.
+// ============================================================
+const fragments = {
+  en: {
+    food: {
+      openers: [
+        'Absolutely blown away by the food at Andaaz!',
+        'The culinary experience at Andaaz is next-level!',
+        'I cannot stop thinking about the food at Andaaz!',
+        'What an extraordinary meal at Andaaz!',
+        'Andaaz has completely raised the bar for me!',
+        'The flavours at Andaaz left me speechless!',
+        'Every single dish at Andaaz was a masterpiece!',
+        'If you love desi food, Andaaz will blow your mind!',
+        'From the first bite to the last, Andaaz was pure perfection!',
+        'Just had the most incredible meal of my life at Andaaz!'
+      ],
+      dish_intros: [
+        'The {dish1} was absolutely divine — {dish_adj1}, and the {dish2} was equally impressive.',
+        'We ordered the {dish1} and {dish2} — both were cooked to absolute perfection.',
+        'Their {dish1} is hands down the best I\'ve ever had, and the {dish2} was a revelation.',
+        'I\'m still dreaming about their {dish1}. Combined with the {dish2}, it was a feast.',
+        'The {dish1} had incredible depth of flavour, and the {dish2} was aromatic perfection.',
+        'We couldn\'t get enough of the {dish1} — rich, authentic, and beautifully plated. The {dish2} was a must-try too.'
+      ],
+      dish_adjs: [
+        'perfectly spiced and aromatic',
+        'rich, creamy, and full of flavour',
+        'tender, juicy, and beautifully seasoned',
+        'bursting with authentic spices',
+        'melt-in-your-mouth delicious',
+        'cooked with real skill and love'
+      ],
+      fusion_notes: [
+        'The French culinary influence adds an elegant twist you won\'t find anywhere else.',
+        'What makes Andaaz special is how they blend traditional desi recipes with French technique.',
+        'The Indo-French fusion concept is brilliantly executed here.',
+        'You can taste both the Pakistani-Indian heritage and the French sophistication in every dish.',
+        'The fusion of South Asian spices with French cooking methods creates something truly unique.',
+        'Their creative blend of desi flavours with French finesse is unmatched.'
+      ],
+      closers: [
+        'Easily the {superlative}. Five stars, no question!',
+        'If you\'re looking for the {superlative}, look no further. Highly recommend!',
+        'This is the {superlative} and I will be coming back every week.',
+        'Hands down the {superlative}. A culinary gem you must experience!',
+        'Already recommended this to everyone I know. The {superlative} without a doubt!',
+        'Cannot wait to return. Truly the {superlative}. Book a table ASAP!'
+      ]
+    },
+    ambiance: {
+      openers: [
+        'The atmosphere at Andaaz is absolutely stunning!',
+        'Walking into Andaaz feels like entering another world!',
+        'Andaaz has the most beautiful ambiance I\'ve seen in any restaurant!',
+        'The moment you step inside Andaaz, you know you\'re somewhere special!',
+        'The decor and vibe at Andaaz are simply breathtaking!',
+        'Andaaz has created a dining atmosphere that\'s truly one of a kind!'
+      ],
+      details: [
+        'The interior perfectly blends South Asian elegance with French sophistication — warm lighting, stunning decor, and a refined energy that makes every meal memorable.',
+        'Every detail has been thoughtfully designed — from the ambient lighting to the tasteful art pieces. It feels like a curated gallery meets fine dining.',
+        'The warm golden tones, elegant furnishings, and soft music create an incredibly inviting space. It\'s upscale yet welcoming.',
+        'Gorgeous Indo-French design elements throughout — rich textures, beautiful table settings, and an atmosphere that\'s both intimate and grand.',
+        'The restaurant strikes the perfect balance between cozy and sophisticated. The decor celebrates both French and South Asian aesthetics beautifully.'
+      ],
+      occasions: [
+        'Perfect for a romantic date night, a celebration, or an upscale family dinner {location}.',
+        'Whether you\'re celebrating a special occasion or just want a beautiful evening out {location}, Andaaz delivers.',
+        'This is our go-to spot {location} for everything from anniversaries to casual weekend dinners.',
+        'An ideal choice {location} for anyone who appreciates fine ambiance paired with exceptional food.',
+        'If you want more than just a meal — a full sensory experience {location} — this is it.'
+      ],
+      closers: [
+        'Combined with their incredible {cuisine}, this is the {superlative}!',
+        'The ambiance alone is worth the visit, and the {cuisine} makes it unmissable. Truly the {superlative}.',
+        'Add in the phenomenal {cuisine}, and you have the {superlative}. Five stars!'
+      ]
+    },
+    service: {
+      openers: [
+        'The hospitality at Andaaz is truly world-class!',
+        'I\'ve never experienced service this good at any restaurant!',
+        'The team at Andaaz goes above and beyond!',
+        'From the moment we arrived, the service at Andaaz was impeccable!',
+        'What sets Andaaz apart is their incredible level of service!',
+        'The staff at Andaaz made us feel like royalty!'
+      ],
+      details: [
+        'Our server was incredibly knowledgeable about every dish on the menu, offered wonderful pairing suggestions, and the timing between courses was flawless.',
+        'The host greeted us warmly, our server remembered our preferences from a previous visit, and the kitchen accommodated a dietary request without any fuss.',
+        'Every staff member was attentive, friendly, and genuinely passionate about the food. They even surprised us with a complimentary dessert for our anniversary.',
+        'The service was personal and attentive without being intrusive. Our server explained the fusion concept beautifully and helped us choose the perfect dishes.',
+        'From the warm greeting at the door to the thoughtful goodbye, every interaction felt genuine. The staff clearly takes pride in what they do.'
+      ],
+      closers: [
+        'This level of hospitality combined with their {cuisine} makes Andaaz the {superlative}. True five-star experience!',
+        'The combination of outstanding service and delicious {cuisine} is why Andaaz is the {superlative}. We\'ll keep coming back!',
+        'Exceptional people, exceptional food. Andaaz is the {superlative} and deserves every bit of recognition!'
+      ]
+    },
+    family: {
+      openers: [
+        'Andaaz is our family\'s new favourite restaurant!',
+        'We brought the whole family to Andaaz and it was wonderful!',
+        'Looking for a family-friendly restaurant that doesn\'t compromise on quality? Andaaz is it!',
+        'Andaaz is the perfect spot for family gatherings!',
+        'Our family had the most incredible evening at Andaaz!',
+        'Three generations of our family dined at Andaaz and everyone loved it!'
+      ],
+      details: [
+        'The menu has something for everyone — from classic desi favourites that the grandparents loved to creative fusion dishes that impressed the younger generation. The portions are generous and perfect for sharing.',
+        'The kids loved the food, the adults were impressed by the Indo-French fusion flavours, and the staff were incredibly accommodating with high chairs and modified dishes.',
+        'It\'s rare to find a place this upscale yet so welcoming for families. The warm atmosphere made everyone comfortable, from our toddler to our grandmother.',
+        'We celebrated my parents\' anniversary here and everything was perfect. The diverse menu meant every family member found something they adored, and the staff went out of their way to make it special.',
+        'Large group, no problem. Andaaz handled our family of 12 with grace — attentive service, timely courses, and a warm atmosphere that felt like a home away from home.'
+      ],
+      closers: [
+        'This is the kind of {cuisine} every neighbourhood needs. Easily the {superlative}!',
+        'Already planning our next family visit. The {superlative} for family dining — five stars!',
+        'Andaaz has become our family\'s go-to celebration spot {location}. Truly the {superlative}!'
+      ]
+    },
+    fusion: {
+      openers: [
+        'The fusion concept at Andaaz is unlike anything I\'ve experienced!',
+        'Andaaz has cracked the code on Indo-French fusion!',
+        'I was curious about Indo-French fusion and Andaaz completely won me over!',
+        'Where else can you find Pakistani-Indian classics reimagined through a French lens?',
+        'Andaaz is doing something truly revolutionary with their fusion menu!',
+        'The Indo-French fusion at Andaaz is a culinary work of art!'
+      ],
+      details: [
+        'The chef has mastered the art of blending traditional desi recipes with refined French cooking methods. Each dish is a journey from the streets of Lahore to the bistros of Paris.',
+        'The {dish1} had an elegance I\'ve never seen before — classic desi spices married with French technique. And the {dish2} was equally innovative.',
+        'The menu reads like a love letter to both cultures — {dish1} with French precision, {dish2} with artisanal quality, and desserts that bridge two continents.',
+        'Every bite tells a story of heritage meeting innovation. The {dish1} was reimagined beautifully, and the {dish2} showcased both traditions with respect.',
+        'Rich Pakistani-Indian spices meet refined French sauces and presentation. The {dish1} and {dish2} were standouts — creative yet deeply authentic.'
+      ],
+      closers: [
+        'If you appreciate creative {cuisine} that honours its roots, Andaaz {location} is an absolute must. The {superlative}!',
+        'This restaurant is doing something truly original. Bravo to the entire team — the {superlative}!',
+        'A groundbreaking dining concept {location}. Andaaz is easily the {superlative}. Five stars!'
+      ]
+    },
+    overall: {
+      openers: [
+        'Andaaz delivers a flawless dining experience in every way!',
+        'Where do I even begin with Andaaz? Everything was perfect!',
+        'A perfect five-star experience from start to finish at Andaaz!',
+        'Andaaz has set a new standard for dining {location}!',
+        'I\'ve eaten at many restaurants but Andaaz stands in a league of its own!',
+        'Every aspect of Andaaz is thoughtfully crafted to perfection!'
+      ],
+      details: [
+        'The {cuisine} is inventive and delicious — the {dish1} and {dish2} were outstanding. The ambiance is refined and welcoming, and the service is genuinely top-tier.',
+        'From the stunning decor to the exceptional {dish1} and {dish2}, from the warm hospitality to the innovative fusion menu — Andaaz fires on all cylinders.',
+        'The food is extraordinary, the atmosphere is gorgeous, the staff are phenomenal, and the overall experience is worth every penny. The {dish1} alone is worth the visit.',
+        'Incredible {cuisine}, beautiful setting, attentive service, and dishes like the {dish1} and {dish2} that showcase real culinary artistry. This is more than a restaurant — it\'s a destination.'
+      ],
+      closers: [
+        'I\'ve recommended Andaaz to all my friends and family, and every single one has thanked me. The {superlative} — you have to experience it yourself!',
+        'Whether you\'re a foodie looking for something new or just want an exceptional meal {location}, Andaaz delivers on all fronts. The {superlative}!',
+        'Simply the {superlative}. Cannot recommend highly enough. Book now and thank me later!',
+        'This is the kind of restaurant you tell everyone about. The {superlative}, full stop!'
+      ]
+    }
+  },
+  fr: {
+    food: {
+      openers: [
+        'Absolument époustouflé par la cuisine chez Andaaz!',
+        'L\'expérience culinaire chez Andaaz est exceptionnelle!',
+        'Je n\'arrête pas de penser à la nourriture d\'Andaaz!',
+        'Quel repas extraordinaire chez Andaaz!',
+        'Andaaz a complètement redéfini mes standards culinaires!',
+        'Les saveurs chez Andaaz m\'ont laissé sans voix!',
+        'Chaque plat chez Andaaz était un véritable chef-d\'œuvre!',
+        'Le meilleur repas de ma vie chez Andaaz!'
+      ],
+      dish_intros: [
+        'Le {dish1} était divin — {dish_adj1}, et le {dish2} était tout aussi impressionnant.',
+        'Nous avons commandé le {dish1} et le {dish2} — les deux étaient cuisinés à la perfection.',
+        'Leur {dish1} est le meilleur que j\'aie jamais goûté, et le {dish2} était une révélation.',
+        'Je rêve encore de leur {dish1}. Accompagné du {dish2}, c\'était un vrai festin.',
+        'Le {dish1} avait une profondeur de saveur incroyable, et le {dish2} était d\'une perfection aromatique.'
+      ],
+      dish_adjs: [
+        'parfaitement épicé et aromatique',
+        'riche, crémeux et plein de saveur',
+        'tendre, juteux et magnifiquement assaisonné',
+        'débordant d\'épices authentiques',
+        'fondant en bouche',
+        'cuisiné avec un vrai savoir-faire'
+      ],
+      fusion_notes: [
+        'L\'influence culinaire française ajoute une touche élégante unique.',
+        'Ce qui rend Andaaz spécial, c\'est la fusion des recettes desi traditionnelles avec la technique française.',
+        'Le concept de fusion franco-indienne est brillamment exécuté ici.',
+        'On goûte à la fois l\'héritage pakistanais-indien et la sophistication française dans chaque plat.',
+        'La fusion des épices sud-asiatiques avec les méthodes de cuisine françaises crée quelque chose de vraiment unique.'
+      ],
+      closers: [
+        'Facilement le {superlative}. Cinq étoiles, sans hésitation!',
+        'Si vous cherchez le {superlative}, ne cherchez plus. Hautement recommandé!',
+        'C\'est le {superlative} et j\'y retournerai chaque semaine.',
+        'Sans conteste le {superlative}. Un joyau culinaire à découvrir absolument!'
+      ]
+    },
+    ambiance: {
+      openers: [
+        'L\'ambiance chez Andaaz est absolument magnifique!',
+        'Entrer chez Andaaz, c\'est pénétrer dans un autre univers!',
+        'Andaaz possède la plus belle ambiance de tous les restaurants que j\'ai visités!',
+        'Dès que vous franchissez la porte d\'Andaaz, vous savez que c\'est un lieu spécial!'
+      ],
+      details: [
+        'L\'intérieur mélange parfaitement l\'élégance sud-asiatique et la sophistication française — éclairage chaleureux, décoration superbe et une énergie raffinée.',
+        'Chaque détail a été soigneusement pensé — de l\'éclairage ambiant aux pièces d\'art. On se croirait dans une galerie transformée en restaurant gastronomique.',
+        'Les tons dorés, le mobilier élégant et la musique douce créent un espace incroyablement accueillant.',
+        'De magnifiques éléments de design franco-indien — textures riches, belle mise en table et une atmosphère à la fois intime et grandiose.'
+      ],
+      occasions: [
+        'Parfait pour un dîner romantique, une célébration ou un repas familial haut de gamme {location}.',
+        'Que ce soit pour une occasion spéciale ou simplement une belle soirée {location}, Andaaz livre.',
+        'Notre adresse de choix {location} pour tout, des anniversaires aux dîners du week-end.'
+      ],
+      closers: [
+        'Combiné à leur incroyable {cuisine}, c\'est le {superlative}!',
+        'L\'ambiance seule vaut le détour, et la {cuisine} le rend incontournable. Le {superlative}!'
+      ]
+    },
+    service: {
+      openers: [
+        'L\'hospitalité chez Andaaz est vraiment exceptionnelle!',
+        'Je n\'ai jamais expérimenté un service aussi bon!',
+        'L\'équipe d\'Andaaz se surpasse à chaque visite!',
+        'Dès notre arrivée, le service chez Andaaz était impeccable!'
+      ],
+      details: [
+        'Notre serveur connaissait parfaitement chaque plat, a offert de superbes suggestions et le timing entre les services était impeccable.',
+        'L\'hôte nous a accueillis chaleureusement, notre serveur a accommodé nos besoins alimentaires sans problème et nous a même surpris avec un dessert offert.',
+        'Chaque membre du personnel était attentif, amical et véritablement passionné. Le service était personnel sans être intrusif.',
+        'De l\'accueil chaleureux à l\'au revoir attentionné, chaque interaction était authentique. L\'équipe est fière de son travail.'
+      ],
+      closers: [
+        'Ce niveau d\'hospitalité combiné à leur {cuisine} fait d\'Andaaz le {superlative}!',
+        'Service exceptionnel, cuisine exceptionnelle. Andaaz est le {superlative}!'
+      ]
+    },
+    family: {
+      openers: [
+        'Andaaz est devenu le restaurant préféré de notre famille!',
+        'Nous avons amené toute la famille chez Andaaz et ce fut merveilleux!',
+        'Un restaurant familial qui ne compromet pas sur la qualité? Andaaz!',
+        'Notre famille a passé la plus belle soirée chez Andaaz!'
+      ],
+      details: [
+        'Le menu a quelque chose pour tout le monde — des classiques desi adorés par les grands-parents aux plats fusion créatifs qui ont impressionné les jeunes. Les portions sont généreuses.',
+        'Les enfants ont adoré, les adultes ont été impressionnés par les saveurs fusion, et le personnel était incroyablement accommodant.',
+        'C\'est rare de trouver un endroit aussi haut de gamme et si accueillant pour les familles. L\'atmosphère chaleureuse a mis tout le monde à l\'aise.',
+        'Nous avons célébré l\'anniversaire de mes parents ici et tout était parfait. Le menu diversifié a satisfait chaque membre de la famille.'
+      ],
+      closers: [
+        'Le genre de {cuisine} dont chaque quartier a besoin. Le {superlative}!',
+        'Nous planifions déjà notre prochaine visite en famille. Le {superlative}!'
+      ]
+    },
+    fusion: {
+      openers: [
+        'Le concept fusion chez Andaaz est unique en son genre!',
+        'Andaaz a trouvé le secret de la fusion franco-indienne!',
+        'J\'étais curieux de la fusion franco-indienne et Andaaz m\'a totalement conquis!',
+        'Andaaz fait quelque chose de vraiment révolutionnaire!'
+      ],
+      details: [
+        'Le chef maîtrise l\'art de fusionner les recettes desi traditionnelles avec les méthodes de cuisine françaises. Chaque plat est un voyage de Lahore à Paris.',
+        'Le {dish1} avait une élégance inédite — les épices desi classiques mariées à la technique française. Le {dish2} était tout aussi innovant.',
+        'Le menu est une lettre d\'amour aux deux cultures — {dish1} avec précision française, {dish2} de qualité artisanale.',
+        'Les épices pakistanaises-indiennes rencontrent les sauces françaises raffinées. Le {dish1} et le {dish2} étaient exceptionnels.'
+      ],
+      closers: [
+        'Si vous appréciez la {cuisine} créative, Andaaz {location} est un incontournable. Le {superlative}!',
+        'Ce restaurant fait quelque chose de vraiment original. Bravo à toute l\'équipe — le {superlative}!'
+      ]
+    },
+    overall: {
+      openers: [
+        'Andaaz offre une expérience gastronomique impeccable!',
+        'Par où commencer avec Andaaz? Tout était parfait!',
+        'Une expérience cinq étoiles du début à la fin!',
+        'Andaaz a établi un nouveau standard gastronomique {location}!'
+      ],
+      details: [
+        'La {cuisine} est inventive et délicieuse — le {dish1} et le {dish2} étaient exceptionnels. L\'ambiance est raffinée et le service est de premier ordre.',
+        'Du décor magnifique au {dish1} et {dish2} exceptionnels, de l\'hospitalité chaleureuse au menu fusion innovant — Andaaz excelle en tout.',
+        'La cuisine est extraordinaire, l\'atmosphère est magnifique, le personnel est phénoménal. Le {dish1} seul vaut le détour.',
+        'Incroyable {cuisine}, cadre superbe, service attentif et des plats comme le {dish1} et le {dish2} qui témoignent d\'un véritable art culinaire.'
+      ],
+      closers: [
+        'J\'ai recommandé Andaaz à tout mon entourage et chacun m\'a remercié. Le {superlative} — à découvrir absolument!',
+        'Simplement le {superlative}. Réservez maintenant et remerciez-moi plus tard!',
+        'C\'est le genre de restaurant dont on parle à tout le monde. Le {superlative}!'
+      ]
+    }
+  }
+};
+
+// ============================================================
+// UNIQUE REVIEW GENERATOR
+// ============================================================
+// Track generated hashes to guarantee uniqueness within session
+const generatedHashes = new Set();
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickTwo(arr) {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return [shuffled[0], shuffled[1]];
+}
+
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return hash;
+}
+
+function generateUniqueReview() {
+  const lang = currentLang;
+  const mood = currentMood;
+  const f = fragments[lang][mood];
+  const kw = seoKeywords[lang];
+
+  let review = '';
+  let attempts = 0;
+
+  while (attempts < 50) {
+    attempts++;
+
+    // Pick random fragments
+    const opener = pick(f.openers);
+    const [dish1, dish2] = pickTwo(kw.dishes);
+    const location = pick(kw.location);
+    const cuisine = pick(kw.cuisine);
+    const superlative = pick(kw.superlative);
+
+    // Build middle section based on mood
+    let middle = '';
+    if (mood === 'food') {
+      let dishIntro = pick(f.dish_intros)
+        .replace('{dish1}', dish1)
+        .replace('{dish2}', dish2)
+        .replace('{dish_adj1}', pick(f.dish_adjs));
+      middle = dishIntro + ' ' + pick(f.fusion_notes);
+    } else if (mood === 'ambiance') {
+      middle = pick(f.details) + ' ' + pick(f.occasions).replace('{location}', location);
+    } else if (mood === 'service') {
+      middle = pick(f.details);
+    } else if (mood === 'family') {
+      middle = pick(f.details);
+    } else if (mood === 'fusion' || mood === 'overall') {
+      middle = pick(f.details)
+        .replace('{dish1}', dish1)
+        .replace('{dish2}', dish2)
+        .replace('{cuisine}', cuisine);
+    }
+
+    // Build closer with keyword injection
+    let closer = pick(f.closers)
+      .replace('{superlative}', superlative)
+      .replace('{location}', location)
+      .replace('{cuisine}', cuisine);
+
+    review = opener + ' ' + middle + ' ' + closer;
+
+    // Check uniqueness
+    const hash = simpleHash(review);
+    if (!generatedHashes.has(hash)) {
+      generatedHashes.add(hash);
+      return review;
+    }
+  }
+
+  // Fallback: add timestamp micro-variation to guarantee uniqueness
+  const timeVar = [
+    'Visited recently and', 'Just went there and', 'Had dinner here and',
+    'Took the family and', 'Went for lunch and', 'Celebrated here and'
+  ];
+  return pick(timeVar) + ' ' + review;
+}
+
+// ============================================================
+// UI LOGIC
+// ============================================================
+function displayReview() {
+  const el = document.getElementById('reviewText');
+  el.contentEditable = 'false';
+  document.getElementById('editHint').classList.remove('visible');
+  el.classList.remove('generating');
+  el.textContent = generateUniqueReview();
+}
+
+function selectMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMood = btn.dataset.mood;
+  const el = document.getElementById('reviewText');
+  el.classList.add('generating');
+  el.textContent = currentLang === 'fr' ? 'Création de votre avis...' : 'Crafting your review...';
+  setTimeout(() => displayReview(), 500);
+}
+
+function switchLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
+  if (lang === 'fr') {
+    document.querySelector('.stars-label').textContent = 'Merci d\'avoir dîné avec nous!';
+    document.querySelector('.section-label').textContent = 'Qu\'avez-vous préféré?';
+    document.querySelector('.steps-title').textContent = 'Comment ça marche';
+    document.querySelectorAll('.step-text')[0].innerHTML = 'Choisissez ce que vous avez aimé et nous rédigerons un avis unique pour vous';
+    document.querySelectorAll('.step-text')[1].innerHTML = 'Appuyez sur <strong>Copier l\'avis</strong>';
+    document.querySelectorAll('.step-text')[2].innerHTML = 'Appuyez sur <strong>Ouvrir Google</strong>, 5 étoiles, collez et soumettez!';
+    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Ouvrir Google Avis &rarr;';
+    const labels = ['Cuisine', 'Ambiance', 'Service', 'En Famille', 'Fusion', 'Tout!'];
+    document.querySelectorAll('.mood-label').forEach((el, i) => el.textContent = labels[i]);
+  } else {
+    document.querySelector('.stars-label').textContent = 'Thank you for dining with us!';
+    document.querySelector('.section-label').textContent = 'What did you love most?';
+    document.querySelector('.steps-title').textContent = 'How it works';
+    document.querySelectorAll('.step-text')[0].innerHTML = 'Choose what you loved and we\'ll craft a unique review for you';
+    document.querySelectorAll('.step-text')[1].innerHTML = 'Tap <strong>Copy Review</strong> to copy the text';
+    document.querySelectorAll('.step-text')[2].innerHTML = 'Tap <strong>Open Google Reviews</strong>, select 5 stars, paste & submit!';
+    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Open Google Reviews &rarr;';
+    const labels = ['The Food', 'Ambiance', 'Service', 'Family Vibe', 'Fusion Menu', 'Everything!'];
+    document.querySelectorAll('.mood-label').forEach((el, i) => el.textContent = labels[i]);
+  }
+  displayReview();
+}
+
+function regenerate() {
+  const el = document.getElementById('reviewText');
+  el.classList.add('generating');
+  el.textContent = currentLang === 'fr' ? 'Création en cours...' : 'Crafting your review...';
+  el.contentEditable = 'false';
+  setTimeout(() => displayReview(), 500);
+}
+
+function toggleEdit() {
+  const el = document.getElementById('reviewText');
+  const isEditing = el.contentEditable === 'true';
+  el.contentEditable = isEditing ? 'false' : 'true';
+  document.getElementById('editHint').classList.toggle('visible', !isEditing);
+  if (!isEditing) {
+    el.focus();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+function copyReview() {
+  const text = document.getElementById('reviewText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '<span>&#10003;</span> Copied!';
+    showToast(currentLang === 'fr' ? 'Avis copié! Ouvrez Google ↓' : 'Review copied! Now open Google ↓');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<span>&#x1F4CB;</span> Copy Review';
+    }, 3000);
+  });
+}
+
+function openGoogleReview() {
+  window.open(GOOGLE_MAPS_REVIEW_URL, '_blank');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Init
+displayReview();
+</script>
+</body>
+</html>
