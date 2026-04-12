@@ -69,11 +69,18 @@
       background: linear-gradient(90deg, var(--copper-dark), var(--copper), var(--copper-light), var(--copper), var(--copper-dark));
     }
 
-    /* Logo image */
+    /* Header with logo left, text right */
+    .qr-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
     .logo-img {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 8px;
+      width: 120px;
+      height: 120px;
+      flex-shrink: 0;
     }
 
     .logo-img img {
@@ -82,9 +89,14 @@
       object-fit: contain;
     }
 
+    .header-text {
+      text-align: left;
+      flex: 1;
+    }
+
     .qr-logo {
       font-family: 'Playfair Display', serif;
-      font-size: 32px; font-weight: 700;
+      font-size: 30px; font-weight: 700;
       color: var(--copper);
       letter-spacing: 5px;
       text-transform: uppercase;
@@ -94,7 +106,6 @@
     .qr-tagline {
       font-size: 9px; letter-spacing: 3px;
       text-transform: uppercase; color: var(--text-light);
-      margin-bottom: 20px;
     }
 
     .qr-divider {
@@ -279,11 +290,15 @@
   <p class="subtitle">Print-ready QR code for table cards, receipts & signage</p>
 
   <div class="qr-card" id="qrCard">
-    <div class="logo-img">
-      <img src="https://andaaz.fr/logo.png" alt="Andaaz Logo" onerror="this.style.display='none'">
+    <div class="qr-header">
+      <div class="logo-img">
+        <img src="https://andaaz.fr/logo.png" alt="Andaaz Logo" onerror="this.parentElement.style.display='none'">
+      </div>
+      <div class="header-text">
+        <div class="qr-logo">Andaaz</div>
+        <div class="qr-tagline">Desi Brasserie &bull; Paris 17</div>
+      </div>
     </div>
-    <div class="qr-logo">Andaaz</div>
-    <div class="qr-tagline">Desi Brasserie &bull; Paris 17</div>
     <div class="qr-divider"></div>
     <div class="qr-cta">Vous avez aim&eacute; ?</div>
     <div class="qr-cta-sub">Scannez pour nous laisser un avis</div>
