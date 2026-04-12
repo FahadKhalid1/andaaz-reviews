@@ -180,20 +180,20 @@
 
   <div class="stars-section">
     <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-    <div class="stars-label">Thank you for dining with us!</div>
+    <div class="stars-label">Merci d'avoir dîné avec nous!</div>
   </div>
 
   <div class="lang-toggle">
-    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">English</button>
-    <button class="lang-btn" data-lang="fr" onclick="switchLang('fr')">Fran&ccedil;ais</button>
+    <button class="lang-btn" data-lang="en" onclick="switchLang('en')">English</button>
+    <button class="lang-btn active" data-lang="fr" onclick="switchLang('fr')">Fran&ccedil;ais</button>
   </div>
 
   <div class="mood-section">
-    <div class="section-label">What did you love? (pick one or more)</div>
+    <div class="section-label">Qu'avez-vous préféré? (un ou plusieurs)</div>
     <div class="mood-grid">
       <div class="mood-btn active" data-mood="food" onclick="toggleMood(this)">
         <span class="mood-emoji">🍛</span>
-        <span class="mood-label">The Food</span>
+        <span class="mood-label">Cuisine</span>
       </div>
       <div class="mood-btn" data-mood="ambiance" onclick="toggleMood(this)">
         <span class="mood-emoji">✨</span>
@@ -205,15 +205,15 @@
       </div>
       <div class="mood-btn" data-mood="family" onclick="toggleMood(this)">
         <span class="mood-emoji">👨‍👩‍👧‍👦</span>
-        <span class="mood-label">Family Vibe</span>
+        <span class="mood-label">En Famille</span>
       </div>
       <div class="mood-btn" data-mood="fusion" onclick="toggleMood(this)">
         <span class="mood-emoji">🇫🇷🇮🇳</span>
-        <span class="mood-label">Fusion Menu</span>
+        <span class="mood-label">Fusion</span>
       </div>
       <div class="mood-btn" data-mood="overall" onclick="toggleMood(this)">
         <span class="mood-emoji">💯</span>
-        <span class="mood-label">Everything!</span>
+        <span class="mood-label">Tout!</span>
       </div>
     </div>
   </div>
@@ -232,14 +232,14 @@
 
   <button class="google-btn" onclick="openGoogleReview()">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-    Write Review on Google &rarr;
+    Écrire un avis Google &rarr;
   </button>
 
   <div class="steps">
-    <div class="steps-title">How it works</div>
-    <div class="step"><div class="step-num">1</div><div class="step-text">Choose what you loved and we'll craft a unique review for you</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-text">Tap <strong>Copy Review</strong> to copy the text</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-text">Tap <strong>Write Review on Google</strong>, select 5 stars, paste & submit!</div></div>
+    <div class="steps-title">Comment ça marche</div>
+    <div class="step"><div class="step-num">1</div><div class="step-text">Choisissez ce que vous avez aimé et nous rédigerons un avis unique pour vous</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Appuyez sur <strong>Copier l'avis</strong></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Appuyez sur <strong>Écrire un avis Google</strong>, 5 étoiles, collez et soumettez!</div></div>
   </div>
 
   <div class="footer">
@@ -258,7 +258,7 @@
 // ============================================================
 const GOOGLE_MAPS_REVIEW_URL = 'https://g.page/r/CWRCrOTozj1eEBM/review';
 
-let currentLang = 'en';
+let currentLang = 'fr';
 let selectedMoods = ['food'];
 
 // ============================================================
@@ -889,18 +889,18 @@ function switchLang(lang) {
     document.querySelectorAll('.step-text')[0].innerHTML = 'Choisissez ce que vous avez aimé et nous rédigerons un avis unique pour vous';
     document.querySelectorAll('.step-text')[1].innerHTML = 'Appuyez sur <strong>Copier l\'avis</strong>';
     document.querySelectorAll('.step-text')[2].innerHTML = 'Appuyez sur <strong>Écrire un avis Google</strong>, 5 étoiles, collez et soumettez!';
-    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Ouvrir Google Avis &rarr;';
+    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Écrire un avis Google &rarr;';
     const labels = ['Cuisine', 'Ambiance', 'Service', 'En Famille', 'Fusion', 'Tout!'];
     document.querySelectorAll('.mood-label').forEach((el, i) => el.textContent = labels[i]);
   } else {
     document.querySelector('.stars-label').textContent = 'Thank you for dining with us!';
-    document.querySelector('.section-label').textContent = 'What did you love most?';
+    document.querySelector('.section-label').textContent = 'What did you love? (pick one or more)';
     document.querySelector('.steps-title').textContent = 'How it works';
     document.querySelectorAll('.step-text')[0].innerHTML = 'Choose what you loved and we\'ll craft a unique review for you';
     document.querySelectorAll('.step-text')[1].innerHTML = 'Tap <strong>Copy Review</strong> to copy the text';
-    document.querySelectorAll('.step-text')[2].innerHTML = 'Tap <strong>Open Google Reviews</strong>, select 5 stars, paste & submit!';
-    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Open Google Reviews &rarr;';
-    const labels = ['The Food', 'Ambiance', 'Service', 'Family Vibe', 'Fusion Menu', 'Everything!'];
+    document.querySelectorAll('.step-text')[2].innerHTML = 'Tap <strong>Write Review on Google</strong>, select 5 stars, paste & submit!';
+    document.querySelector('.google-btn').innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> Write Review on Google &rarr;';
+    const labels = ['The Food', 'Ambiance', 'Service', 'Family Vibe', 'Fusion', 'Everything!'];
     document.querySelectorAll('.mood-label').forEach((el, i) => el.textContent = labels[i]);
   }
   displayReview();
@@ -956,8 +956,8 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Init
-displayReview();
+// Init — start in French
+switchLang('fr');
 </script>
 </body>
 </html>
