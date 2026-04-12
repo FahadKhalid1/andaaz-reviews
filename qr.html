@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,101 +8,170 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --copper: #B5702A;
+      --copper-light: #D4923E;
+      --copper-dark: #8B5520;
+      --cream: #FDF8F0;
+      --cream-dark: #F5EBD8;
+      --dark: #2C1810;
+      --text: #5A3E2B;
+      --text-light: #8B7355;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f5f5f5;
+      background: var(--cream);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 40px 20px;
     }
+
     h1 {
       font-family: 'Playfair Display', serif;
       font-size: 24px;
-      color: #333;
+      color: var(--dark);
       margin-bottom: 8px;
     }
-    .subtitle { color: #777; font-size: 14px; margin-bottom: 32px; }
+
+    .subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 32px; }
 
     /* Print-ready QR card */
     .qr-card {
-      width: 400px;
-      background: #111;
+      width: 420px;
+      background: white;
       border-radius: 24px;
-      padding: 48px 40px;
+      padding: 48px 40px 36px;
       text-align: center;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 24px rgba(181,112,42,0.12), 0 1px 4px rgba(0,0,0,0.06);
+      border: 1px solid rgba(181,112,42,0.1);
     }
+
+    /* Decorative mandala-inspired border top */
     .qr-card::before {
       content: '';
       position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.1) 0%, transparent 50%);
-      pointer-events: none;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--copper-dark), var(--copper), var(--copper-light), var(--copper), var(--copper-dark));
     }
+
+    .qr-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--copper-dark), var(--copper), var(--copper-light), var(--copper), var(--copper-dark));
+    }
+
+    /* Logo image */
+    .logo-img {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 8px;
+    }
+
+    .logo-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
     .qr-logo {
       font-family: 'Playfair Display', serif;
-      font-size: 36px; font-weight: 700;
-      color: #C9A84C; letter-spacing: 4px;
-      text-transform: uppercase; margin-bottom: 4px;
-      position: relative;
+      font-size: 32px; font-weight: 700;
+      color: var(--copper);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
     }
+
     .qr-tagline {
-      font-size: 10px; letter-spacing: 2.5px;
-      text-transform: uppercase; color: #9A9080;
-      margin-bottom: 24px; position: relative;
+      font-size: 9px; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--text-light);
+      margin-bottom: 20px;
     }
+
     .qr-divider {
-      width: 50px; height: 1px;
-      background: #C9A84C; margin: 0 auto 24px;
-      opacity: 0.4; position: relative;
+      width: 80px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--copper), transparent);
+      margin: 0 auto 20px;
     }
+
+    .qr-cta {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 600;
+      color: var(--dark); margin-bottom: 4px;
+    }
+
+    .qr-cta-sub {
+      font-size: 12px; color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    .qr-stars {
+      font-size: 24px; letter-spacing: 4px;
+      color: var(--copper); margin: 12px 0;
+    }
+
+    /* QR code container */
     .qr-container {
       background: white;
       border-radius: 16px;
-      padding: 16px;
+      padding: 14px;
       display: inline-block;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      border: 2px solid var(--cream-dark);
       position: relative;
     }
+
     #qrCode canvas, #qrCode img {
       display: block;
     }
-    .qr-cta {
-      font-size: 18px; font-weight: 600;
-      color: #C9A84C; margin-bottom: 6px;
-      position: relative;
-    }
-    .qr-cta-sub {
-      font-size: 12px; color: #9A9080;
-      position: relative;
-    }
-    .qr-stars {
-      font-size: 28px; letter-spacing: 3px;
-      color: #C9A84C; margin: 16px 0 8px;
-      position: relative;
-    }
-    .qr-url {
-      font-size: 11px; color: #666;
-      margin-top: 16px; position: relative;
-      letter-spacing: 0.5px;
-    }
-    .powered {
-      font-size: 10px; color: #555;
-      margin-top: 12px; position: relative;
-    }
-    .powered span { color: #C9A84C; }
 
-    /* Controls */
+    .qr-url {
+      font-size: 11px; color: var(--text-light);
+      margin-top: 12px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    /* Footer with Step UpAI */
+    .card-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--cream-dark);
+    }
+
+    .card-footer a {
+      font-size: 9px;
+      color: var(--text-light);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .card-footer a:hover { opacity: 1; }
+
+    .card-footer .stepupai {
+      color: var(--copper);
+      font-weight: 600;
+    }
+
+    /* Controls (hidden when printing) */
     .controls {
       margin-top: 32px;
       display: flex; gap: 12px;
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .btn {
       padding: 12px 28px;
       border-radius: 12px;
@@ -112,54 +181,65 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .btn-primary {
-      background: #C9A84C; color: #111;
+      background: var(--copper); color: white;
     }
-    .btn-primary:hover { background: #E8D48B; }
+    .btn-primary:hover { background: var(--copper-light); }
+
     .btn-secondary {
-      background: #222; color: #C9A84C;
-      border: 1px solid #C9A84C;
+      background: white; color: var(--copper);
+      border: 1.5px solid var(--copper);
     }
-    .btn-secondary:hover { background: #333; }
+    .btn-secondary:hover { background: var(--cream); }
 
     /* URL input */
     .url-config {
       margin-top: 24px;
-      width: 400px;
+      width: 420px;
       text-align: center;
     }
+
     .url-config label {
-      font-size: 12px; color: #777;
+      font-size: 12px; color: var(--text-light);
       display: block; margin-bottom: 8px;
       text-transform: uppercase; letter-spacing: 1px;
     }
+
     .url-config input {
       width: 100%;
       padding: 12px 16px;
-      border: 2px solid #ddd;
+      border: 2px solid var(--cream-dark);
       border-radius: 10px;
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       text-align: center;
       outline: none;
+      background: white;
+      color: var(--dark);
     }
-    .url-config input:focus { border-color: #C9A84C; }
+
+    .url-config input:focus { border-color: var(--copper); }
+
     .url-config .hint {
-      font-size: 11px; color: #999;
+      font-size: 11px; color: var(--text-light);
       margin-top: 6px;
     }
+
     .btn-update {
       margin-top: 10px;
       padding: 8px 20px;
       border-radius: 8px;
       border: none;
-      background: #C9A84C;
-      color: #111;
+      background: var(--copper);
+      color: white;
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
     }
+
+    .btn-update:hover { background: var(--copper-light); }
 
     /* Size selector */
     .size-selector {
@@ -167,25 +247,29 @@
       display: flex; gap: 8px;
       justify-content: center;
     }
+
     .size-btn {
       padding: 6px 16px;
       border-radius: 8px;
-      border: 1px solid #ddd;
+      border: 1.5px solid var(--cream-dark);
       background: white;
       font-size: 12px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
+      color: var(--text);
     }
+
     .size-btn.active {
-      border-color: #C9A84C;
-      background: rgba(201,168,76,0.1);
-      color: #C9A84C;
+      border-color: var(--copper);
+      background: rgba(181,112,42,0.06);
+      color: var(--copper);
+      font-weight: 600;
     }
 
     @media print {
-      body { background: white; padding: 0; }
+      body { background: white; padding: 0; display: flex; justify-content: center; align-items: center; }
       .controls, .url-config, .subtitle, h1, .size-selector { display: none; }
-      .qr-card { border-radius: 0; }
+      .qr-card { box-shadow: none; border: none; border-radius: 0; }
     }
   </style>
 </head>
@@ -195,17 +279,22 @@
   <p class="subtitle">Print-ready QR code for table cards, receipts & signage</p>
 
   <div class="qr-card" id="qrCard">
+    <div class="logo-img">
+      <img src="https://andaaz.fr/logo.png" alt="Andaaz Logo" onerror="this.style.display='none'">
+    </div>
     <div class="qr-logo">Andaaz</div>
-    <div class="qr-tagline">Cuisine Fusion Franco-Indienne</div>
+    <div class="qr-tagline">Desi Brasserie &bull; Paris 17</div>
     <div class="qr-divider"></div>
-    <div class="qr-cta">Loved your meal?</div>
-    <div class="qr-cta-sub">Scan to leave us a quick review</div>
+    <div class="qr-cta">Vous avez aim&eacute; ?</div>
+    <div class="qr-cta-sub">Scannez pour nous laisser un avis</div>
     <div class="qr-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
     <div class="qr-container">
       <div id="qrCode"></div>
     </div>
     <div class="qr-url" id="displayUrl">andaaz.step-upai.com</div>
-    <div class="powered">Powered by <span>Step UpAI</span></div>
+    <div class="card-footer">
+      <a href="https://step-upai.com" target="_blank">Powered by <span class="stepupai">Step UpAI</span> &bull; step-upai.com</a>
+    </div>
   </div>
 
   <div class="size-selector">
@@ -217,14 +306,13 @@
   <div class="url-config">
     <label>Review Page URL</label>
     <input type="text" id="urlInput" value="https://andaaz.step-upai.com" placeholder="https://andaaz.step-upai.com">
-    <div class="hint">This URL will be encoded in the QR code. Update when your domain is live.</div>
+    <div class="hint">This URL will be encoded in the QR code.</div>
     <button class="btn-update" onclick="updateQR()">Update QR Code</button>
   </div>
 
   <div class="controls">
-    <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
-    <button class="btn btn-secondary" onclick="downloadQR()">⬇️ Download PNG</button>
-    <button class="btn btn-secondary" onclick="downloadCard()">🎴 Download Card</button>
+    <button class="btn btn-primary" onclick="window.print()">Print</button>
+    <button class="btn btn-secondary" onclick="downloadQR()">Download QR PNG</button>
   </div>
 
 <script>
@@ -237,7 +325,6 @@
     qr.make();
 
     const container = document.getElementById('qrCode');
-    // Create canvas for high-res output
     const moduleCount = qr.getModuleCount();
     const cellSize = qrCellSize;
     const size = moduleCount * cellSize;
@@ -246,15 +333,14 @@
     canvas.height = size;
     const ctx = canvas.getContext('2d');
 
-    // White background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, size, size);
 
-    // Draw modules
+    // Draw QR modules in copper color
     for (let row = 0; row < moduleCount; row++) {
       for (let col = 0; col < moduleCount; col++) {
         if (qr.isDark(row, col)) {
-          ctx.fillStyle = '#111111';
+          ctx.fillStyle = '#2C1810';
           ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
         }
       }
@@ -268,7 +354,6 @@
     const input = document.getElementById('urlInput');
     currentUrl = input.value.trim() || 'https://andaaz.step-upai.com';
 
-    // Update display URL (show clean domain)
     try {
       const urlObj = new URL(currentUrl);
       document.getElementById('displayUrl').textContent = urlObj.hostname;
@@ -287,17 +372,17 @@
     switch (size) {
       case 'small':
         card.style.width = '280px';
-        card.style.padding = '32px 28px';
+        card.style.padding = '32px 28px 24px';
         qrCellSize = 4;
         break;
       case 'medium':
-        card.style.width = '400px';
-        card.style.padding = '48px 40px';
+        card.style.width = '420px';
+        card.style.padding = '48px 40px 36px';
         qrCellSize = 6;
         break;
       case 'large':
-        card.style.width = '520px';
-        card.style.padding = '56px 48px';
+        card.style.width = '540px';
+        card.style.padding = '56px 48px 40px';
         qrCellSize = 8;
         break;
     }
@@ -311,14 +396,6 @@
     link.download = 'andaaz-review-qr.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
-  }
-
-  function downloadCard() {
-    // Use html2canvas-like approach: render card to canvas
-    const card = document.getElementById('qrCard');
-    // Simple: screenshot via DOM-to-image fallback
-    // For now, trigger print which gives best quality
-    alert('For the best quality card export, use Print → Save as PDF.\n\nThe QR code PNG can be downloaded separately with the Download PNG button.');
   }
 
   // Init
