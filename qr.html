@@ -340,6 +340,8 @@
 
   let currentUrl = 'https://andaaz.step-upai.com';
   let qrCellSize = 6;
+  let trackDebounce = null;
+  const trackedWaiters = new Set();
 
   function trackWaiter(waiterName, action) {
     if (!waiterName) return;
@@ -418,6 +420,15 @@
     }
 
     generateQR(currentUrl);
+
+    // Fire once per unique waiter name, debounced 1s after typing stops
+    if (waiter && !trackedWaiters.has(waiter)) {
+      clearTimeout(trackDebounce);
+      trackDebounce = setTimeout(() => {
+        trackedWaiters.add(waiter);
+        trackWaiter(waiter, 'created');
+      }, 1000);
+    }
   }
 
   function setSize(size) {
