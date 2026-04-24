@@ -201,6 +201,11 @@
     }
     .btn-primary:hover { background: var(--copper-light); }
 
+    .qr-disabled .qr-container { opacity: 0.2; filter: blur(2px); pointer-events: none; }
+    .qr-disabled .waiter-badge { display: none !important; }
+    .qr-disabled .qr-url::after { content: ' — enter a waiter name'; color: var(--copper); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
     .btn-secondary {
       background: white; color: var(--copper);
       border: 1.5px solid var(--copper);
@@ -421,6 +426,17 @@
 
     generateQR(currentUrl);
 
+    // Enable/disable QR card and buttons based on waiter name presence
+    const card = document.getElementById('qrCard');
+    const btns = document.querySelectorAll('.controls .btn');
+    if (waiter) {
+      card.classList.remove('qr-disabled');
+      btns.forEach(b => b.disabled = false);
+    } else {
+      card.classList.add('qr-disabled');
+      btns.forEach(b => b.disabled = true);
+    }
+
     // Fire once per unique waiter name, debounced 1s after typing stops
     if (waiter && !trackedWaiters.has(waiter)) {
       clearTimeout(trackDebounce);
@@ -473,8 +489,8 @@
     link.click();
   }
 
-  // Init
-  generateQR(currentUrl);
+  // Init — start disabled until a waiter name is entered
+  updateQR();
 </script>
 </body>
 </html>
