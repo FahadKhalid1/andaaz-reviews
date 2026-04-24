@@ -273,32 +273,20 @@ const urlParams = new URLSearchParams(window.location.search);
 const waiterTag = (urlParams.get('w') || urlParams.get('waiter') || 'unknown').toLowerCase().trim();
 
 // Send event to n8n webhook (fire-and-forget, no UI blocking)
+// Uses GET + URL params to avoid CORS preflight entirely
 function trackEvent(eventType) {
   if (!TRACKING_WEBHOOK) return;
   try {
-    const payload = {
+    const params = new URLSearchParams({
       waiter: waiterTag,
-      event: eventType,        // 'scan' | 'copy' | 'submit'
+      event: eventType,
       timestamp: new Date().toISOString(),
       lang: currentLang,
       moods: selectedMoods.join(','),
-      userAgent: navigator.userAgent.substring(0, 200)
-    };
-    // Use sendBeacon for reliability even if user navigates away
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-      navigator.sendBeacon(TRACKING_WEBHOOK, blob);
-    } else {
-      fetch(TRACKING_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(() => {});
-    }
-  } catch (e) {
-    // Silent fail — tracking should never break the UX
-  }
+      userAgent: navigator.userAgent.substring(0, 100)
+    });
+    new Image().src = TRACKING_WEBHOOK + '?' + params.toString();
+  } catch (e) {}
 }
 
 // Track scan event on page load
