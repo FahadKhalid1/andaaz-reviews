@@ -141,6 +141,20 @@
       font-weight: 500;
     }
 
+    /* Waiter badge */
+    .waiter-badge {
+      margin-top: 10px;
+      padding: 4px 14px;
+      background: rgba(181,112,42,0.1);
+      color: var(--copper);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 20px;
+      border: 1px solid rgba(181,112,42,0.25);
+      display: inline-block;
+    }
+
     /* Footer with Step UpAI */
     .card-footer {
       margin-top: 16px;
@@ -292,6 +306,7 @@
       <div id="qrCode"></div>
     </div>
     <div class="qr-url" id="displayUrl">andaaz.step-upai.com</div>
+    <div class="waiter-badge" id="waiterBadge" style="display:none;"></div>
     <div class="card-footer">
       <a href="https://step-upai.com" target="_blank">Powered by <span class="stepupai">Step UpAI</span> &bull; step-upai.com</a>
     </div>
@@ -304,10 +319,15 @@
   </div>
 
   <div class="url-config">
-    <label>Review Page URL</label>
-    <input type="text" id="urlInput" value="https://andaaz.step-upai.com" placeholder="https://andaaz.step-upai.com">
-    <div class="hint">This URL will be encoded in the QR code.</div>
-    <button class="btn-update" onclick="updateQR()">Update QR Code</button>
+    <label>Waiter Name (optional &mdash; for tracking)</label>
+    <input type="text" id="waiterInput" placeholder="e.g. ali, sara, fahad" oninput="updateQR()">
+    <div class="hint">Each waiter gets a unique QR. Leave blank for a generic code.</div>
+  </div>
+
+  <div class="url-config">
+    <label>Base URL</label>
+    <input type="text" id="urlInput" value="https://andaaz.step-upai.com" placeholder="https://andaaz.step-upai.com" oninput="updateQR()">
+    <div class="hint">This URL will be encoded in the QR code (with waiter tag if provided).</div>
   </div>
 
   <div class="controls">
@@ -350,15 +370,34 @@
     container.appendChild(canvas);
   }
 
-  function updateQR() {
-    const input = document.getElementById('urlInput');
-    currentUrl = input.value.trim() || 'https://andaaz.step-upai.com';
+  function slugify(s) {
+    return s.toLowerCase().trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
 
+  function updateQR() {
+    const baseUrl = document.getElementById('urlInput').value.trim() || 'https://andaaz.step-upai.com';
+    const waiter = slugify(document.getElementById('waiterInput').value || '');
+
+    // Append ?w=waiter if provided
+    currentUrl = waiter ? `${baseUrl}?w=${waiter}` : baseUrl;
+
+    // Update display URL on the card
     try {
       const urlObj = new URL(currentUrl);
       document.getElementById('displayUrl').textContent = urlObj.hostname;
     } catch {
       document.getElementById('displayUrl').textContent = currentUrl.replace(/^https?:\/\//, '');
+    }
+
+    // Show waiter badge on the card
+    const badge = document.getElementById('waiterBadge');
+    if (waiter) {
+      badge.textContent = waiter.toUpperCase();
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
     }
 
     generateQR(currentUrl);

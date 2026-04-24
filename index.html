@@ -258,8 +258,51 @@
 // ============================================================
 const GOOGLE_MAPS_REVIEW_URL = 'https://g.page/r/CWRCrOTozj1eEBM/review';
 
+// n8n webhook for tracking waiter events (scan, copy, submit)
+// Leave empty to disable tracking
+const TRACKING_WEBHOOK = 'https://fk92.app.n8n.cloud/webhook/andaaz-waiter-tracker';
+
 let currentLang = 'fr';
 let selectedMoods = ['food'];
+
+// ============================================================
+// WAITER TRACKING
+// ============================================================
+// Read ?w= parameter from URL (waiter tag)
+const urlParams = new URLSearchParams(window.location.search);
+const waiterTag = (urlParams.get('w') || urlParams.get('waiter') || 'unknown').toLowerCase().trim();
+
+// Send event to n8n webhook (fire-and-forget, no UI blocking)
+function trackEvent(eventType) {
+  if (!TRACKING_WEBHOOK) return;
+  try {
+    const payload = {
+      waiter: waiterTag,
+      event: eventType,        // 'scan' | 'copy' | 'submit'
+      timestamp: new Date().toISOString(),
+      lang: currentLang,
+      moods: selectedMoods.join(','),
+      userAgent: navigator.userAgent.substring(0, 200)
+    };
+    // Use sendBeacon for reliability even if user navigates away
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      navigator.sendBeacon(TRACKING_WEBHOOK, blob);
+    } else {
+      fetch(TRACKING_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {});
+    }
+  } catch (e) {
+    // Silent fail — tracking should never break the UX
+  }
+}
+
+// Track scan event on page load
+window.addEventListener('load', () => trackEvent('scan'));
 
 // ============================================================
 // SEO/GEO KEYWORD POOLS — Paris Desi Indian Restaurant
@@ -936,6 +979,7 @@ function toggleEdit() {
 
 function copyReview() {
   const text = document.getElementById('reviewText').textContent;
+  trackEvent('copy');
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.classList.add('copied');
@@ -949,6 +993,7 @@ function copyReview() {
 }
 
 function openGoogleReview() {
+  trackEvent('submit');
   showToast(currentLang === 'fr' ? '⭐ Collez votre avis et soumettez!' : '⭐ Paste your review and submit!');
   setTimeout(() => window.open(GOOGLE_MAPS_REVIEW_URL, '_blank'), 800);
 }
