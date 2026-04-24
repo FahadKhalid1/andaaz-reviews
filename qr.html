@@ -331,13 +331,30 @@
   </div>
 
   <div class="controls">
-    <button class="btn btn-primary" onclick="window.print()">Print</button>
+    <button class="btn btn-primary" onclick="printQR()">Print</button>
     <button class="btn btn-secondary" onclick="downloadQR()">Download QR PNG</button>
   </div>
 
 <script>
+  const TRACKING_WEBHOOK = 'https://fk92.app.n8n.cloud/webhook/andaaz-waiter-tracker';
+
   let currentUrl = 'https://andaaz.step-upai.com';
   let qrCellSize = 6;
+
+  function trackWaiter(waiterName, action) {
+    if (!waiterName) return;
+    try {
+      const params = new URLSearchParams({
+        waiter: waiterName,
+        event: 'qr_' + action,
+        timestamp: new Date().toISOString(),
+        lang: '',
+        moods: '',
+        userAgent: navigator.userAgent.substring(0, 100)
+      });
+      new Image().src = TRACKING_WEBHOOK + '?' + params.toString();
+    } catch (e) {}
+  }
 
   function generateQR(url) {
     const qr = qrcode(0, 'M');
@@ -428,9 +445,17 @@
     generateQR(currentUrl);
   }
 
+  function printQR() {
+    const waiter = slugify(document.getElementById('waiterInput').value || '');
+    trackWaiter(waiter || 'generic', 'printed');
+    window.print();
+  }
+
   function downloadQR() {
     const canvas = document.querySelector('#qrCode canvas');
     if (!canvas) return;
+    const waiter = slugify(document.getElementById('waiterInput').value || '');
+    trackWaiter(waiter || 'generic', 'downloaded');
     const link = document.createElement('a');
     link.download = 'andaaz-review-qr.png';
     link.href = canvas.toDataURL('image/png');
