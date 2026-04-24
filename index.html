@@ -271,20 +271,20 @@ let selectedMoods = ['food'];
 // Read ?w= parameter from URL (waiter tag)
 const urlParams = new URLSearchParams(window.location.search);
 const waiterTag = (urlParams.get('w') || urlParams.get('waiter') || 'unknown').toLowerCase().trim();
+const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 
 // Send event to n8n webhook (fire-and-forget, no UI blocking)
 // Uses GET + URL params to avoid CORS preflight entirely
-function trackEvent(eventType) {
+function trackEvent(eventType, reviewText) {
   if (!TRACKING_WEBHOOK) return;
   try {
     const params = new URLSearchParams({
       waiter: waiterTag,
       event: eventType,
+      sid: sessionId,
       timestamp: new Date().toISOString(),
-      lang: currentLang,
-      moods: selectedMoods.join(','),
-      userAgent: navigator.userAgent.substring(0, 100)
     });
+    if (reviewText) params.set('review', reviewText.substring(0, 400));
     new Image().src = TRACKING_WEBHOOK + '?' + params.toString();
   } catch (e) {}
 }
@@ -967,7 +967,7 @@ function toggleEdit() {
 
 function copyReview() {
   const text = document.getElementById('reviewText').textContent;
-  trackEvent('copy');
+  trackEvent('copy', text);
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.classList.add('copied');
