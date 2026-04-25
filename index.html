@@ -275,6 +275,14 @@ const sessionId = Date.now().toString(36) + Math.random().toString(36).substr(2,
 
 // Send event to n8n webhook (fire-and-forget, no UI blocking)
 // Uses GET + URL params to avoid CORS preflight entirely
+function parisTimestamp() {
+  return new Date().toLocaleString('fr-FR', {
+    timeZone: 'Europe/Paris',
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
 function trackEvent(eventType, reviewText) {
   if (!TRACKING_WEBHOOK) return;
   try {
@@ -282,7 +290,7 @@ function trackEvent(eventType, reviewText) {
       waiter: waiterTag,
       event: eventType,
       sid: sessionId,
-      timestamp: new Date().toISOString(),
+      timestamp: parisTimestamp(),
     });
     if (reviewText) params.set('review', reviewText.substring(0, 400));
     new Image().src = TRACKING_WEBHOOK + '?' + params.toString();
@@ -981,7 +989,7 @@ function copyReview() {
 }
 
 function openGoogleReview() {
-  trackEvent('submit');
+  trackEvent('opened');
   showToast(currentLang === 'fr' ? '⭐ Collez votre avis et soumettez!' : '⭐ Paste your review and submit!');
   setTimeout(() => window.open(GOOGLE_MAPS_REVIEW_URL, '_blank'), 800);
 }
