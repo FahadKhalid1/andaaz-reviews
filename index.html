@@ -822,7 +822,8 @@ function generateUniqueReview() {
 
     // Opener from primary mood
     const opener = pick(f.openers)
-      .replace('{location}', location);
+      .replace('{location}', location)
+      .replace('{superlative}', superlative);
 
     // Short middle from primary mood
     let middle = '';
