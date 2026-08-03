@@ -310,7 +310,7 @@
     <div class="qr-container">
       <div id="qrCode"></div>
     </div>
-    <div class="qr-url" id="displayUrl">andaaz.step-upai.com</div>
+    <div class="qr-url" id="displayUrl">avis.step-upai.com</div>
     <div class="waiter-badge" id="waiterBadge" style="display:none;"></div>
     <div class="card-footer">
       <a href="https://step-upai.com" target="_blank">Powered by <span class="stepupai">Step UpAI</span> &bull; step-upai.com</a>
@@ -331,7 +331,7 @@
 
   <div class="url-config">
     <label>Base URL</label>
-    <input type="text" id="urlInput" value="https://andaaz.step-upai.com" placeholder="https://andaaz.step-upai.com" oninput="updateQR()">
+    <input type="text" id="urlInput" placeholder="https://avis.step-upai.com" oninput="updateQR()">
     <div class="hint">This URL will be encoded in the QR code (with waiter tag if provided).</div>
   </div>
 
@@ -343,7 +343,14 @@
 <script>
   const TRACKING_WEBHOOK = 'https://fk92.app.n8n.cloud/webhook/andaaz-waiter-tracker';
 
-  let currentUrl = 'https://andaaz.step-upai.com';
+  // Single source of truth for the review-page URL the QR encodes.
+  // Auto-uses whatever domain this generator is served from (so the QR always
+  // points to the co-located review page); falls back to PROD_URL when opened
+  // locally over file://. To move the tool to another domain, change PROD_URL.
+  const PROD_URL = 'https://avis.step-upai.com';
+  const DEFAULT_BASE = (location.origin && location.origin.startsWith('http')) ? location.origin : PROD_URL;
+
+  let currentUrl = DEFAULT_BASE;
   let qrCellSize = 6;
   let trackDebounce = null;
   const trackedWaiters = new Set();
@@ -401,7 +408,7 @@
   }
 
   function updateQR() {
-    const baseUrl = document.getElementById('urlInput').value.trim() || 'https://andaaz.step-upai.com';
+    const baseUrl = document.getElementById('urlInput').value.trim() || DEFAULT_BASE;
     const waiter = slugify(document.getElementById('waiterInput').value || '');
 
     // Append ?w=waiter if provided
@@ -489,7 +496,8 @@
     link.click();
   }
 
-  // Init — start disabled until a waiter name is entered
+  // Init — prefill the base URL with the deployed origin, start disabled until a waiter name is entered
+  document.getElementById('urlInput').value = DEFAULT_BASE;
   updateQR();
 </script>
 </body>
